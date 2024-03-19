@@ -9,51 +9,55 @@ const firebaseConfig = {
   measurementId: "G-9207FNDP1N"
 };
 
-
 firebase.initializeApp(firebaseConfig);
-var foodDb = firebase.database().ref('catering');
+const auth=firebase.auth();
 
-document.getElementById('signup').addEventListener('submit', submitSignup);
-document.getElementById('login').addEventListener('submit', submitLogin);
 
-function submitSignup(e) {
+const loginForm=document.getElementById("login");
+ const signup=document.getElementById("signup");
+
+signup.addEventListener('submit',(e)=>{
   e.preventDefault();
-  var name = getElementVal('txt');
-  var email = getElementVal('email');
-  var pwd = getElementVal('pwd');
-  signupUser(name, email, pwd);
-}
+  const email = document.getElementById('email').value;
+  const password = document.getElementById('pwd').value;
 
-function submitLogin(e) {
-  e.preventDefault();
-  var email = getElementVal('login-email');
-  var pwd = getElementVal('login-pwd');
-  loginUser(email, pwd);
-}
-
-const signupUser = (name, email, pwd) => {
-  var details = foodDb.push({
-    name: name,
-    email: email,
-    password: pwd
-  });
-  alert("Registration successful! Please login.");
-}
-var loginUser = (email, pwd) => {
-  firebase.auth().signInWithEmailAndPassword(email, pwd)
-    .then(() => {
-      // Login successful
-      alert("Login successful!");
-      document.querySelector('.main').classList.add('hidden'); // Hide the signup/login form
-      document.getElementById('food-content').classList.remove('hidden'); // Show the food content
+  auth.createUserWithEmailAndPassword(email, password,)
+    .then((userCredential) => {
+      // Registration successful
+      console.log("created"+userCredential.password)
+ alert("Registerd successfully Pls Login in");
+ 
     })
     .catch((error) => {
-      var errorMessage = error.message;
-      alert("INVALID");
+      // Handle registration errors
+      alert(error.message)
+      console.error('Registration error:', error.message);
     });
-}
+});
+
+loginForm.addEventListener('submit',(e)=>{
+  e.preventDefault();
+  const email = document.getElementById('login-email').value;
+  const password = document.getElementById('login-pwd').value;
+
+  auth.signInWithEmailAndPassword(email, password)
+    .then((userCredential) => {
+      // Registration successful
+      console.log("logged in"+userCredential)
+      document.querySelector('header').classList.add('hidden'); // Hide the signup/login form
+      document.querySelector('.main').classList.add('hidden'); // Hide the signup/login form
+      document.getElementById('food-content').classList.remove('hidden'); // Show the food content;
+    })
+    .catch((error) => {
+      // Handle registration errors
+      console.error('Registration error:', error.message);
+    });
+});
 
 
-var getElementVal = (id) => {
-  return document.getElementById(id).value;
-}
+
+
+
+
+     
+
